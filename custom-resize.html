@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>custom-resize</title>
+</head>
+<body>
+<h1>Open console</h1>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+
+    (function($,sr){
+
+        // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+        var debounce = function (func, threshold, execAsap) {
+            var timeout;
+
+            return function debounced () {
+                var obj = this, args = arguments;
+                function delayed () {
+                if (!execAsap)
+                    func.apply(obj, args);
+                    timeout = null;
+                };
+
+                if (timeout) {
+                    clearTimeout(timeout);
+                } else if (execAsap) {
+                    func.apply(obj, args);
+                }
+
+                timeout = setTimeout(delayed, threshold || 100);
+            };
+        }
+        // smartresize 
+        jQuery.fn[sr] = function(fn, th, exec){  return fn ? this.bind('resize', debounce(fn, th, exec)) : this.trigger(sr); };
+
+    })(jQuery,'smartresize');
+
+    var func = function() {
+        console.log('smart');
+    }
+
+    // usage:
+    $(window).smartresize(func, 1000);
+
+    $(window).resize(function(event) {
+        console.warn('native');
+    });
+
+</script>
+</body>
+</html>
